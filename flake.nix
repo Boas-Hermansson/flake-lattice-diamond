@@ -30,10 +30,7 @@
           unzip
           makeWrapper
           autoPatchelfHook 
-          #libsForQt5.wrapQtAppsHook
-          autoPatchelfHook
         ];
-
 
 
         buildInputs = [
@@ -44,8 +41,6 @@
             libx11
             libxext
             libxt
-            #libsForQt5.qtbase
-
 
             libxft
             fontconfig
@@ -56,7 +51,6 @@
             glib
             zlib
             freetype
-            #fontconfig #i think it needs to use the synpase fontconfig library
             libsm
             libice
             libxrender
@@ -135,61 +129,8 @@
       };
 
       fhs-env = pkgs.buildFHSEnv {
-           name = "diamond-fhs";
+           name = "diamond";
            targetPkgs = pkgs: with pkgs; [ 
-            # libxft
-            # fontconfig
-            # libxext
-            # libx11
-            # expat
-            # dbus
-            # glib
-            # zlib
-            # freetype
-            # fontconfig
-            # libsm
-            # libice
-            # libxrender
-            # libxext
-            # libxt
-            # libxcb
-            # libusb-compat-0_1
-            # libxrandr
-            # libtinfo
-            # numactl
-            # alsa-lib
-            # libtiff
-            # libxinerama
-            # libpulseaudio
-            # ncurses5
-            # pango
-            # cairo
-            # gtk2
-            # gtk2-x11
-            # libxml2_13
-            # freetype
-            # fontconfig
-            # libxext
-            # libxt
-            #
-            # #synplify
-            # libuuid
-            # libglvnd
-            # krb5
-            # libxcomposite
-            # gst_all_1.gstreamer
-            # gst_all_1.gst-plugins-base
-            # sqlite
-            # graphite2
-            # libxkbcommon
-            # #libxcb-util
-            # libxcb-image
-            # libxcb-keysyms
-            # libxcb-render-util
-            #
-            #
-          
-            #fontconfig
             libxft
             libxext
             libx11
@@ -197,12 +138,9 @@
 
             self.packages.x86_64-linux.diamond
            ]; 
-           runScript = "bash";
-           # profile = ''
-           #  export QT_PLUGIN_PATH=${pkgs.qt5.qtbase}/${pkgs.qt5.qtbase.qtPluginPrefix}
-           # '';
+           runScript = "diamond";
+
         };
-      #default = self.packages.x86_64-linux.diamond;
       default = self.packages.x86_64-linux.fhs-env;
     };
   };
