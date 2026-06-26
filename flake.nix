@@ -125,7 +125,7 @@
 
             self.packages.x86_64-linux.diamond
            ]; 
-           runScript = "bash";
+           runScript = "diamond";
       };
     };
     packages.${system} = 
