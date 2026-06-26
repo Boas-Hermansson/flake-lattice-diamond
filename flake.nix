@@ -12,8 +12,9 @@
   pkgs = import nixpkgs {inherit system;};
   
   in {
-    packages.x86_64-linux = {
-    diamond = with pkgs; pkgs.stdenv.mkDerivation { 
+
+    overlays.default = final: prev: {
+      diamond = with final; final.stdenv.mkDerivation { 
         name = "diamond";
 
 
@@ -34,17 +35,9 @@
 
         buildInputs = [
             expat
-            freetype
             fontconfig.lib
-            libxcb
-            libx11
-            libxext
-            libxt
-
             libxft
-            libxext
             libx11
-            expat
             dbus
             glib
             zlib
@@ -52,8 +45,6 @@
             libsm
             libice
             libxrender
-            libxext
-            libxt
             libxcb
             libusb-compat-0_1
             libxrandr
@@ -69,11 +60,8 @@
             gtk2
             gtk2-x11
             libxml2_13
-            freetype
             libxext
             libxt
-
-            #synplify
             libuuid
             libglvnd
             krb5
@@ -115,7 +103,6 @@
         runHook postInstall
         '';
 
-        FONT_PATH="${fontconfig.lib}";
         
         dontAutoPatchelf = ":)";
 
@@ -127,7 +114,7 @@
 
       };
 
-      fhs-env = pkgs.buildFHSEnv {
+      diamond-fhs = final.buildFHSEnv {
            name = "diamond";
            targetPkgs = pkgs: with pkgs; [ 
             libxft
@@ -139,9 +126,19 @@
             self.packages.x86_64-linux.diamond
            ]; 
            runScript = "bash";
-
+      };
+    };
+    packages.${system} = 
+      let 
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+          overlays = [ self.overlays.default ];
         };
-      default = self.packages.x86_64-linux.fhs-env;
+      in
+    {
+      diamond = pkgs.diamond;
+      default = pkgs.diamond.fhs;
     };
   };
 }
