@@ -10,13 +10,8 @@
   let 
   system = "x86_64-linux";
   pkgs = import nixpkgs {inherit system;};
-  
-  in {
-
-    overlays.default = final: prev: {
-      diamond = with final; final.stdenv.mkDerivation { 
+  diamond-base = final: prev: with final; final.stdenv.mkDerivation { 
         name = "diamond";
-
 
         src = requireFile {
           name = "3.14.0.75.2_Diamond_lin.zip";
@@ -24,56 +19,16 @@
           sha256 = "8e793407c595455af5304b68fdc7c16d7992a5f1ed0fb963998db88699292a95"; 
         };
 
-
         nativeBuildInputs = [
-          tcsh
-          unzip
-          makeWrapper
-          autoPatchelfHook 
+          tcsh unzip makeWrapper autoPatchelfHook 
         ];
 
-
         buildInputs = [
-            expat
-            fontconfig.lib
-            libxft
-            libx11
-            dbus
-            glib
-            zlib
-            freetype
-            libsm
-            libice
-            libxrender
-            libxcb
-            libusb-compat-0_1
-            libxrandr
-            libtinfo
-            numactl
-            alsa-lib
-            libtiff
-            libxinerama
-            libpulseaudio
-            ncurses5
-            pango
-            cairo
-            gtk2
-            gtk2-x11
-            libxml2_13
-            libxext
-            libxt
-            libuuid
-            libglvnd
-            krb5
-            libxcomposite
-            gst_all_1.gstreamer
-            gst_all_1.gst-plugins-base
-            sqlite
-            graphite2
-            libxkbcommon
-            libxcb-image
-            libxcb-keysyms
-            libxcb-render-util
+          expat fontconfig.lib libxft libx11 dbus glib zlib freetype libsm libice libxrender libxcb 
+          libusb-compat-0_1 libxrandr libtinfo numactl alsa-lib libtiff libxinerama libpulseaudio 
+          ncurses5 pango cairo gtk2 gtk2-x11 libxml2_13 libxext libxt libuuid libglvnd krb5 libxcomposite 
+          gst_all_1.gstreamer gst_all_1.gst-plugins-base sqlite graphite2 libxkbcommon libxcb-image 
+          libxcb-keysyms libxcb-render-util
         ];
 
 
@@ -111,10 +66,12 @@
         autoPatchelf $out/diamond
         mv /tmp/questasim $out/diamond/questasim
         '';
-
       };
 
-      diamond-fhs = final.buildFHSEnv {
+  in {
+    overlays.default = final: prev: {
+
+      diamond = final.buildFHSEnv {
            name = "diamond";
            targetPkgs = pkgs: with pkgs; [ 
             libxft
@@ -123,7 +80,7 @@
             expat
             fontconfig.lib
 
-            self.packages.x86_64-linux.diamond
+            (diamond-base final prev)
            ]; 
            runScript = "diamond";
       };
@@ -137,8 +94,7 @@
         };
       in
     {
-      diamond = pkgs.diamond;
-      default = pkgs.diamond.fhs;
+      default = pkgs.diamond;
     };
   };
 }
