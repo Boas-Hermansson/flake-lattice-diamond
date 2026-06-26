@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-
   };
 
   outputs = { self, nixpkgs}:
@@ -36,14 +35,13 @@
         buildInputs = [
             expat
             freetype
-            fontconfig
+            fontconfig.lib
             libxcb
             libx11
             libxext
             libxt
 
             libxft
-            fontconfig
             libxext
             libx11
             expat
@@ -72,7 +70,6 @@
             gtk2-x11
             libxml2_13
             freetype
-            fontconfig
             libxext
             libxt
 
@@ -115,8 +112,10 @@
         mkdir $out/bin
         
         makeWrapper $out/diamond/bin/lin64/diamond $out/bin/diamond
+        runHook postInstall
         '';
 
+        FONT_PATH="${fontconfig.lib}";
         
         dontAutoPatchelf = ":)";
 
@@ -135,10 +134,11 @@
             libxext
             libx11
             expat
+            fontconfig.lib
 
             self.packages.x86_64-linux.diamond
            ]; 
-           runScript = "diamond";
+           runScript = "bash";
 
         };
       default = self.packages.x86_64-linux.fhs-env;
